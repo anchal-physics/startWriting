@@ -1,15 +1,20 @@
-echo 'Welcome to start writing.'
+#!/usr/bin/bash
+
+echo 'Welcome to startWriting.'
 echo 'We will get you to writing your paper/thesis/presentation in minutes'
+echo 'Press ctrl+c anytime to exit the software.'
+echo
 
 if ! command -v gh &> /dev/null
 then
-  echo 'gh not found.'
+  echo 'I did not finnd gh installed on your computer.'
   read -p 'I will attempt installing gh (github CLI), is that ok (y/n)?'
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
       if ! command -v brew &> /dev/null
       then
-          echo 'brew not found'
+          echo
+          echo 'I did not find brew installed on your computer.'
           read -p 'I will attempt installing brew, is that ok (y/n)?'
           if [[ $REPLY =~ ^[Yy]$ ]]
           then
@@ -17,6 +22,8 @@ then
               /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
           fi
       fi
+
+      echo
       echo 'Installing gh...'
       echo 'Ensuring you have reading and writing permissions for required directories'
       sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
@@ -24,18 +31,29 @@ then
       brew install gh
   fi
 fi
+
+echo
 echo 'Logging into Github'
 gh auth login
+
+echo
 echo 'Choose a name for your writing project.'
 read -p 'This will be the name of your repo: '
-repo_name=$REPLY
+repoName=$REPLY
+
+echo
+read -p 'Describe a category of your project (eg. thesis, paper, talk etc).'
+category=$REPLY
+echo
 echo 'Git repo will be created and cloned to current directory'
 read -p 'Do you wish to initiate the git repo in a different location (y/n)?'
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-    read -p 'Enter full path of new location:'
+    read -p 'Enter full or relative path of new location:'
     cd $REPLY
 fi
+
+echo
 read -p 'Do you want your repo to be public (y) or private (n)?'
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -45,4 +63,8 @@ if [[ $REPLY =~ ^[Nn]$ ]]
 then
     privacy="--private"
 fi
-gh repo create $repo_name $privacy --clone
+
+echo
+echo 'Now creating your repo remotely on Github and cloning a local copy.'
+gh repo create $repoName $privacy --clone
+echo
