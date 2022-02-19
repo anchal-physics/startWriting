@@ -1,4 +1,17 @@
-#!/usr/bin/bash
+#!/bin/bash
+
+getTemplateFile() {
+    file=$1
+    curl -LJO https://raw.githubusercontent.com/anchal-physics/startWriting/main/templateFiles/$file
+    sed -i .bak 's/<repoName>/'"$repoName"'/' $file
+    sed -i .bak 's/<category>/'"$category"'/' $file
+    sed -i .bak 's/<baseURL>/'"$baseURL"'/' $file
+    sed -i .bak 's/<outputFileName>/'"$outputFileName"'/' $file
+    rm $file.bak
+    git add $file
+    git commit -m 'Adding template file'"$file"
+    git push
+}
 
 echo 'Welcome to startWriting.'
 echo 'We will get you to writing your paper/thesis/presentation in minutes'
@@ -66,5 +79,22 @@ fi
 
 echo
 echo 'Now creating your repo remotely on Github and cloning a local copy.'
-gh repo create $repoName $privacy --clone
+repoURL="$(gh repo create $repoName $privacy)"
+
+https="https://"
+cloneURL="${repoURL/"$https"/"git@"}".git
+
+git clone $cloneURL
+
+cd $repoName
+
+branchName=$(git branch)
+branchName=${branchName:2:50}
+baseURL="$repoURL"/blob/"$branchName"
+
 echo
+read -p 'Please enter a filename for your main tex file without extension (eg. main):'
+mainFileName=$REPLY
+outputFileName="$mainFileName".pdf
+
+getTemplateFile README.md
