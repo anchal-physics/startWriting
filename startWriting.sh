@@ -81,8 +81,7 @@ echo
 echo 'Now creating your repo remotely on Github and cloning a local copy.'
 repoURL="$(gh repo create $repoName $privacy)"
 
-https="https://"
-cloneURL="${repoURL/"$https"/"git@"}".git
+cloneURL=git@"${repoURL:8:500}".git
 
 git clone $cloneURL
 
