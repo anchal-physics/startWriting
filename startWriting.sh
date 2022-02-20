@@ -1,16 +1,31 @@
 #!/bin/bash
 
+prepTemplateFile() {
+    file=$1
+    sed -i .bak 's|<repoName>|'"$repoName"'|' $file
+    sed -i .bak 's|<category>|'"$category"'|' $file
+    sed -i .bak 's|<baseURL>|'"$baseURL"'|' $file
+    sed -i .bak 's|<outputFileName>|'"$outputFileName"'|' $file
+    rm $file.bak
+}
+
 getTemplateFile() {
     file=$1
     curl -LJO https://raw.githubusercontent.com/anchal-physics/startWriting/main/templateFiles/$file
-    sed -i .bak 's/<repoName>/'"$repoName"'/' $file
-    sed -i .bak 's/<category>/'"$category"'/' $file
-    sed -i .bak 's/<baseURL>/'"$baseURL"'/' $file
-    sed -i .bak 's/<outputFileName>/'"$outputFileName"'/' $file
-    rm $file.bak
+}
+
+gitPushTemplateFile() {
+    file=$1
     git add $file
     git commit -m 'Adding template file'"$file"
     git push
+}
+
+strrep() {
+    text=$1
+    pattern=$2
+    newstr=$3
+    echo ${text/$pattern/$newstr}
 }
 
 echo 'Welcome to startWriting.'
@@ -81,7 +96,8 @@ echo
 echo 'Now creating your repo remotely on Github and cloning a local copy.'
 repoURL="$(gh repo create $repoName $privacy)"
 
-cloneURL=git@"${repoURL:8:500}".git
+cloneURL=$(strrep $repoURL https:// git@)
+cloneURL="$(strrep $cloneURL / :)".git
 
 git clone $cloneURL
 
@@ -96,4 +112,20 @@ read -p 'Please enter a filename for your main tex file without extension (eg. m
 mainFileName=$REPLY
 outputFileName="$mainFileName".pdf
 
+if [ $category = "thesis" ];
+then
+    getTemplateFile thesis.tgz
+    tar -xf thesis.tgz
+    rm thesis.tgz
+    cp -r ./thesis/* ./
+    rm -r thesis
+    mv thesis.tex "$mainFileName".tex
+    prepTemplateFile Makefile
+    git add .
+    git commit -m "Adding template files for thesis writing"
+    git push
+fi
+
 getTemplateFile README.md
+prepTemplateFile README.md
+gitPushTemplateFile README.md

@@ -1,8 +1,8 @@
 #!/usr/bin/make -f
 .PHONY: all
-all: <outputFileName>
+all: <mainFileName>
 
-<outputFileName>: %: %.tex
+<mainFileName>: %: %.tex
 	latexmk -f -pdf $@
 
 .PHONY: clean
