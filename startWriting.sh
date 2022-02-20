@@ -6,6 +6,7 @@ prepTemplateFile() {
     sed -i .bak 's|<category>|'"$category"'|' $file
     sed -i .bak 's|<baseURL>|'"$baseURL"'|' $file
     sed -i .bak 's|<outputFileName>|'"$outputFileName"'|' $file
+    sed -i .bak 's|<mainFileName>|'"$mainFileName"'|' $file
     rm $file.bak
 }
 
