@@ -179,6 +179,7 @@ then
             echo
             echo 'Installing latexmk...'
             sudo tlmgr install latexmk
+        fi
     fi
 fi
 
