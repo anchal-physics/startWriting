@@ -22,6 +22,13 @@ gitPushTemplateFile() {
     git push
 }
 
+getPrepPush() {
+    file=$1
+    getTemplateFile $file
+    prepTemplateFile $file
+    gitPushTemplateFile $file
+}
+
 strrep() {
     text=$1
     pattern=$2
@@ -126,7 +133,72 @@ then
     git commit -m "Adding template files for thesis writing"
     git push
 fi
+https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1.tar.gz
 
-getTemplateFile README.md
-prepTemplateFile README.md
-gitPushTemplateFile README.md
+getPrepPush README.md
+
+if ! command -v latexmk &> /dev/null
+then
+    echo 'I did not find latexmk installed on your computer.'
+    read -p 'I will attempt installing latexmk, is that ok (y/n)?'
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        if ! command -v tlmgr &> /dev/null
+        then
+            echo
+            echo 'I did not find TeX Live Utility installed on your computer.'
+            echo 'You need a latex distribution installed. Full distribution '
+            echo 'is called MacTex which is about 5 Gb and a smaller one is '
+            echo 'is called BasicTex but it lacks in many packages.'
+            echo 'You can also choose to exit setup now and use your own Tex '
+            echo 'compiler. However, you will be missing out on automatic '
+            echo 'compilation hook for your git repo this way.'
+            read -p 'What should I install, MacTex(a), BasicTex(b) or nothing(n)?'
+            if [[ $REPLY =~ ^[Aa]$ ]]
+            then
+                curl -LJO "https://mirror.ctan.org/systems/mac/mactex/MacTeX.pkg"
+                mv MacTeX.pkg /Users/$(whoami)/Desktop/
+                echo "Go to Desktop and double-click on MacTeX.pkg and follow all the instructions."
+                read -p "Press enter when you have installed MacTex."
+                # sudo installer -pkg MacTeX.pkg -target /Applications/Tex
+                echo "Removing installation file..."
+                rm /Users/$(whoami)/Desktop/MacTeX.pkg
+            elif [[ $REPLY =~ ^[Bb]$ ]]
+            then
+                curl -LJO "https://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg"
+                mv BasicTeX.pkg /Users/$(whoami)/Desktop/
+                echo "Go to Desktop and double-click on BasicTeX.pkg and follow all the instructions."
+                read -p "Press enter when you have installed BasicTeX."
+                # sudo installer -pkg MacTeX.pkg -target /Applications/Tex
+                echo "Removing installation file..."
+                rm /Users/$(whoami)/Desktop/BasicTeX.pkg
+                echo 'Installing latexmk...'
+                sudo tlmgr install latexmk
+            fi
+        else
+            echo
+            echo 'Installing latexmk...'
+            sudo tlmgr install latexmk
+    fi
+fi
+
+if ! command -v latexmk &> /dev/null
+then
+    getPrepPush pre-commit
+    getPrepPush setPreCommitAutoCompileHook.sh
+    sudo chmod +x setPreCommitAutoCompileHook.sh
+    ./ setPreCommitAutoCompileHook.sh
+fi
+
+# if [ $privacy = "--public" ]
+# then
+#     echo 'For public repo, you can use server side continous integration for '
+#     echo 'free. I can setup a travis-ci file for you so that you can do this '
+#     echo 'as well. Would you like me to do so?(y/n)'
+# fi
+
+# curl -LJO "https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1.tar.gz"
+# cd MacPorts-2.7.1
+# ./configure && make && sudo make install
+# cd ../
+# rm -rf MacPorts-2.7.1*
