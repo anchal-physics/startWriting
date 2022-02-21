@@ -113,7 +113,7 @@ cd $repoName
 
 branchName=$(git branch)
 branchName=${branchName:2:50}
-baseURL="$repoURL"/blob/"$branchName"
+baseURL="$repoURL"/blob/master
 
 echo
 read -p 'Please enter a filename for your main tex file without extension (eg. main):'
@@ -183,9 +183,10 @@ fi
 if ! command -v "latexmk -h" &> /dev/null
 then
     getPrepPush pre-commit
-    getPrepPush setPreCommitAutoCompileHook.sh
-    sudo chmod +x setPreCommitAutoCompileHook.sh
+    getTemplateFile setPreCommitAutoCompileHook.sh
+    chmod +x setPreCommitAutoCompileHook.sh
     ./ setPreCommitAutoCompileHook.sh
+    gitPushTemplateFile setPreCommitAutoCompileHook.sh
 fi
 
 getPrepPush README.md

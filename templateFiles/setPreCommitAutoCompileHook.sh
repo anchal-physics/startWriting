@@ -1,3 +1,4 @@
 #!/bin/bash
 
-ln -s pre-commit ./.git/pre-commit
+cp pre-commit ./.git/hooks/pre-commit
+chmod +x ./.git/hooks/pre-commit
