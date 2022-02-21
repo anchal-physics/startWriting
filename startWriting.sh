@@ -18,7 +18,7 @@ getTemplateFile() {
 gitPushTemplateFile() {
     file=$1
     git add $file
-    git commit -m 'Adding template file'"$file"
+    git commit -m 'Adding template file '"$file"
     git push
 }
 
@@ -133,11 +133,8 @@ then
     git commit -m "Adding template files for thesis writing"
     git push
 fi
-https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1.tar.gz
 
-getPrepPush README.md
-
-if ! command -v latexmk &> /dev/null
+if ! command -v "latexmk -h" &> /dev/null
 then
     echo 'I did not find latexmk installed on your computer.'
     read -p 'I will attempt installing latexmk, is that ok (y/n)?'
@@ -183,7 +180,7 @@ then
     fi
 fi
 
-if ! command -v latexmk &> /dev/null
+if ! command -v "latexmk -h" &> /dev/null
 then
     getPrepPush pre-commit
     getPrepPush setPreCommitAutoCompileHook.sh
@@ -191,6 +188,7 @@ then
     ./ setPreCommitAutoCompileHook.sh
 fi
 
+getPrepPush README.md
 # if [ $privacy = "--public" ]
 # then
 #     echo 'For public repo, you can use server side continous integration for '
