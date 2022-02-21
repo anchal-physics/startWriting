@@ -185,7 +185,7 @@ then
     getPrepPush pre-commit
     getTemplateFile setPreCommitAutoCompileHook.sh
     chmod +x setPreCommitAutoCompileHook.sh
-    ./ setPreCommitAutoCompileHook.sh
+    ./setPreCommitAutoCompileHook.sh
     gitPushTemplateFile setPreCommitAutoCompileHook.sh
 fi
 
