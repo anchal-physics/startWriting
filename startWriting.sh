@@ -113,6 +113,7 @@ cd $repoName
 
 branchName=$(git branch)
 branchName=${branchName:2:50}
+echo $branchName
 baseURL="$repoURL"/blob/master
 
 echo
