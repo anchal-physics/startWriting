@@ -1,5 +1,5 @@
 #!/bin/bash
 
-make
+make &> pre-commit_log.txt
 make clean
 git add <mainFileName>.pdf
