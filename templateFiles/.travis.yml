@@ -1,0 +1,15 @@
+install:
+- sudo apt-get install texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
+- sudo apt-get install latexmk
+- sudo apt-get install texlive-science
+script:
+- make
+- make clean
+deploy:
+  provider: pages
+  github_token: $GITHUB_TOKEN
+  skip_cleanup: true
+  keep_history: true
+  on:
+    branch: master
+  target_branch: master
