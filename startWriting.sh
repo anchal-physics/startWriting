@@ -229,7 +229,7 @@ then
 fi
 
 echo "With your permission now, I'll add a useful function tmuxmux to your "
-echo "~/.bashrc"
+echo "~/.bash_profile"
 echo "This will allow you to open any command in tmux detached session, as "
 echo "many number of times. The main use is where a software requires you to "
 echo "keep the terminal open for it to run, like latexmk, jupyter notebook etc"
@@ -239,21 +239,22 @@ echo "ltmkpvc "$mainFileName".tex"
 read -p 'Do I have permission to setup the bash functions?(y/n) '
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
+  source ~/.bash_profile
   if ! command -v tmuxmux &> /dev/null
   then
       getTemplateFile tmuxmux.sh
-      sudo cat tmuxmux.sh>>~/.bashrc
+      sudo cat tmuxmux.sh>>~/.bash_profile
       rm tmuxmux.sh
-      source ~/.bashrc
+      source ~/.bash_profile
   else
       echo "Found tmuxmux already, skipping."
   fi
   if ! command -v ltmkpvc &> /dev/null
   then
       getTemplateFile ltmkpvc.sh
-      sudo cat ltmkpvc.sh>>~/.bashrc
+      sudo cat ltmkpvc.sh>>~/.bash_profile
       rm ltmkpvc.sh
-      source ~/.bashrc
+      source ~/.bash_profile
   else
       echo "Found ltmkpvc already, skipping."
   fi
