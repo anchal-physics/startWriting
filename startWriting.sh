@@ -165,15 +165,15 @@ then
     fi
 fi
 
-if ls /Library/TeX/texbin/latexmk 1> /dev/null 2>&1;
-then
-    getPrepPush pre-commit
-    getTemplateFile setPreCommitAutoCompileHook.sh
-    chmod +x setPreCommitAutoCompileHook.sh
-    read -p "Press enter to continue"
-    ./setPreCommitAutoCompileHook.sh
-    gitPushTemplateFile setPreCommitAutoCompileHook.sh
-fi
+# if ls /Library/TeX/texbin/latexmk 1> /dev/null 2>&1;
+# then
+getPrepPush pre-commit
+getTemplateFile setPreCommitAutoCompileHook.sh
+chmod +x setPreCommitAutoCompileHook.sh
+read -p "Press enter to continue"
+./setPreCommitAutoCompileHook.sh
+gitPushTemplateFile setPreCommitAutoCompileHook.sh
+# fi
 
 getPrepPush README.md
 
