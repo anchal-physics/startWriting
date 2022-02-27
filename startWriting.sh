@@ -165,7 +165,7 @@ then
     fi
 fi
 
-if command -v "latexmk -h" &> /dev/null;
+if ls /Library/TeX/texbin/latexmk 1> /dev/null 2>&1;
 then
     getPrepPush pre-commit
     getTemplateFile setPreCommitAutoCompileHook.sh
