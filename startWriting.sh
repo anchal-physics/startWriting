@@ -43,15 +43,15 @@ echo
 
 if ! command -v gh &> /dev/null
 then
-  echo 'I did not finnd gh installed on your computer.'
-  read -p 'I will attempt installing gh (github CLI), is that ok (y/n)?'
+  echo 'I did not find gh installed on your computer.'
+  read -p 'I will attempt installing gh (github CLI), is that ok ?(y/n) '
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
       if ! command -v brew &> /dev/null
       then
           echo
           echo 'I did not find brew installed on your computer.'
-          read -p 'I will attempt installing brew, is that ok (y/n)?'
+          read -p 'I will attempt installing brew, is that ok ?(y/n) '
           if [[ $REPLY =~ ^[Yy]$ ]]
           then
               echo 'Installing brew'
@@ -82,7 +82,7 @@ read -p 'Describe a category of your project (eg. thesis, paper, talk etc).'
 category=$REPLY
 echo
 echo 'Git repo will be created and cloned to current directory'
-read -p 'Do you wish to initiate the git repo in a different location (y/n)?'
+read -p 'Do you wish to initiate the git repo in a different location ?(y/n) '
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     read -p 'Enter full or relative path of new location:'
@@ -111,9 +111,6 @@ git clone $cloneURL
 
 cd $repoName
 
-branchName=$(git branch)
-branchName=${branchName:2:50}
-echo $branchName
 baseURL="$repoURL"/blob/master
 
 echo
@@ -135,53 +132,40 @@ then
     git push
 fi
 
-if ! command -v "latexmk -h" &> /dev/null
+if ! ls /usr/local/texlive/20* 1> /dev/null 2>&1;
 then
-    echo 'I did not find latexmk installed on your computer.'
-    read -p 'I will attempt installing latexmk, is that ok (y/n)?'
-    if [[ $REPLY =~ ^[Yy]$ ]]
+    echo 'I did not find MacTeX installed on your computer.'
+    echo 'You need a latex distribution installed. Full distribution '
+    echo 'is called MacTex which is about 5 Gb and a smaller one is '
+    echo 'is called BasicTex but it lacks in many packages.'
+    echo 'You can also choose to exit setup now and use your own Tex '
+    echo 'compiler. However, you will be missing out on automatic '
+    echo 'compilation hook for your git repo this way.'
+    read -p 'What should I install, MacTex(a), BasicTex(b) or nothing(n)?'
+    if [[ $REPLY =~ ^[Aa]$ ]]
     then
-        if ! command -v tlmgr &> /dev/null
-        then
-            echo
-            echo 'I did not find TeX Live Utility installed on your computer.'
-            echo 'You need a latex distribution installed. Full distribution '
-            echo 'is called MacTex which is about 5 Gb and a smaller one is '
-            echo 'is called BasicTex but it lacks in many packages.'
-            echo 'You can also choose to exit setup now and use your own Tex '
-            echo 'compiler. However, you will be missing out on automatic '
-            echo 'compilation hook for your git repo this way.'
-            read -p 'What should I install, MacTex(a), BasicTex(b) or nothing(n)?'
-            if [[ $REPLY =~ ^[Aa]$ ]]
-            then
-                curl -LJO "https://mirror.ctan.org/systems/mac/mactex/MacTeX.pkg"
-                mv MacTeX.pkg /Users/$(whoami)/Desktop/
-                echo "Go to Desktop and double-click on MacTeX.pkg and follow all the instructions."
-                read -p "Press enter when you have installed MacTex."
-                # sudo installer -pkg MacTeX.pkg -target /Applications/Tex
-                echo "Removing installation file..."
-                rm /Users/$(whoami)/Desktop/MacTeX.pkg
-            elif [[ $REPLY =~ ^[Bb]$ ]]
-            then
-                curl -LJO "https://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg"
-                mv BasicTeX.pkg /Users/$(whoami)/Desktop/
-                echo "Go to Desktop and double-click on BasicTeX.pkg and follow all the instructions."
-                read -p "Press enter when you have installed BasicTeX."
-                # sudo installer -pkg MacTeX.pkg -target /Applications/Tex
-                echo "Removing installation file..."
-                rm /Users/$(whoami)/Desktop/BasicTeX.pkg
-                echo 'Installing latexmk...'
-                sudo tlmgr install latexmk
-            fi
-        else
-            echo
-            echo 'Installing latexmk...'
-            sudo tlmgr install latexmk
-        fi
+        curl -LJO "https://mirror.ctan.org/systems/mac/mactex/MacTeX.pkg"
+        mv MacTeX.pkg /Users/$(whoami)/Desktop/
+        echo "Go to Desktop and double-click on MacTeX.pkg and follow all the instructions."
+        read -p "Press enter when you have installed MacTex."
+        # sudo installer -pkg MacTeX.pkg -target /Applications/Tex
+        echo "Removing installation file..."
+        rm /Users/$(whoami)/Desktop/MacTeX.pkg
+    elif [[ $REPLY =~ ^[Bb]$ ]]
+    then
+        curl -LJO "https://mirror.ctan.org/systems/mac/mactex/BasicTeX.pkg"
+        mv BasicTeX.pkg /Users/$(whoami)/Desktop/
+        echo "Go to Desktop and double-click on BasicTeX.pkg and follow all the instructions."
+        read -p "Press enter when you have installed BasicTeX."
+        # sudo installer -pkg MacTeX.pkg -target /Applications/Tex
+        echo "Removing installation file..."
+        rm /Users/$(whoami)/Desktop/BasicTeX.pkg
+        echo 'Installing latexmk...'
+        sudo tlmgr install latexmk
     fi
 fi
 
-if ! command -v "latexmk -h" &> /dev/null
+if command -v "latexmk -h" &> /dev/null;
 then
     getPrepPush pre-commit
     getTemplateFile setPreCommitAutoCompileHook.sh
@@ -192,15 +176,96 @@ then
 fi
 
 getPrepPush README.md
-# if [ $privacy = "--public" ]
-# then
-#     echo 'For public repo, you can use server side continous integration for '
-#     echo 'free. I can setup a travis-ci file for you so that you can do this '
-#     echo 'as well. Would you like me to do so?(y/n)'
-# fi
 
-# curl -LJO "https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1.tar.gz"
-# cd MacPorts-2.7.1
-# ./configure && make && sudo make install
-# cd ../
-# rm -rf MacPorts-2.7.1*
+echo
+echo "You are already ready to start writing. I do recommend installing "
+echo "tmux as well and my function which would let you just type "
+echo "ltmkpvc file.tex"
+echo "And a tmux session continuosly compiling your tex file would start in "
+echo "the background and if you are ok with installing a open source pdfviewer"
+echo "called skim, you can continuosly monitor your updated pdf as well."
+echo "In the end, it will give you option of using your faviourite editor to "
+echo "to write tex in (like atom, visualcode, emacs) and see changes in real "
+echo "time."
+echo
+
+if command -v "tmux -V" &> /dev/null;
+then
+    echo "I did not find tmux installed"
+    read -p 'I will attempt installing tmux (terminal multiplexer), is that ok ?(y/n) '
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+      if ! command -v brew &> /dev/null
+      then
+          echo
+          echo 'I did not find brew installed on your computer.'
+          read -p 'I will attempt installing brew, is that ok ?(y/n) '
+          if [[ $REPLY =~ ^[Yy]$ ]]
+          then
+              echo 'Installing brew'
+              /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          fi
+      fi
+
+      echo
+      echo 'Installing tmux...'
+      brew install tmux
+    fi
+fi
+
+echo
+if ! ls /Applications/Skim.app 1> /dev/null 2>&1;
+then
+    echo "I did not find Skim installed"
+    read -p 'I will attempt installing Skim (continrous pdf viewer), is that ok ?(y/n) '
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        curl -LJO "https://sourceforge.net/projects/skim-app/files/Skim/Skim-1.6.9/Skim-1.6.9.dmg/download"
+        sudo hdiutil attach Skim-1.6.9.dmg
+        sudo cp -rf /Volumes/Skim/Skim.app /Applications
+        sudo hdiutil detach /Volumes/Skim
+        rm -rf Skim-1.6.9.dmg
+    fi
+fi
+
+echo "With your permission now, I'll add a useful function tmuxmux to your "
+echo "~/.bashrc"
+echo "This will allow you to open any command in tmux detached session, as "
+echo "many number of times. The main use is where a software requires you to "
+echo "keep the terminal open for it to run, like latexmk, jupyter notebook etc"
+echo "I'll also add a function called ltmkpvc"
+echo "In future, you'll be able to start compiling continuously by using "
+echo "ltmkpvc "$mainFileName".tex"
+read -p 'Do I have permission to setup the bash functions?(y/n) '
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  if ! command -v tmuxmux &> /dev/null
+  then
+      getTemplateFile tmuxmux.sh
+      sudo cat tmuxmux.sh>>~/.bashrc
+      rm tmuxmux.sh
+      source ~/.bashrc
+  else
+      echo "Found tmuxmux already, skipping."
+  fi
+  if ! command -v ltmkpvc &> /dev/null
+  then
+      getTemplateFile ltmkpvc.sh
+      sudo cat ltmkpvc.sh>>~/.bashrc
+      rm ltmkpvc.sh
+      source ~/.bashrc
+  else
+      echo "Found ltmkpvc already, skipping."
+  fi
+fi
+
+if [ $privacy = "--public" ]
+then
+    echo 'For public repo, you can use server side continous integration for '
+    echo 'free. I can setup a travis-ci file for you so that you can do this '
+    read -p 'as well. Would you like me to do so?(y/n) '
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        getPrepPush .travis.yml
+    fi
+fi
