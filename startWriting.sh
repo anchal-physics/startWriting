@@ -165,7 +165,7 @@ then
     fi
 fi
 
-if ls /usr/local/texlive/20* 1> /dev/null 2>&1;
+if command -v "latexmk -h" &> /dev/null;
 then
     getPrepPush pre-commit
     getTemplateFile setPreCommitAutoCompileHook.sh
