@@ -270,3 +270,5 @@ then
         getPrepPush .travis.yml
     fi
 fi
+
+echo "You are ready to start writing! Read your README.md for more details."
